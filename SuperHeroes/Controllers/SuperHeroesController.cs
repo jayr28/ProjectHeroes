@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SuperHeroes.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -8,32 +10,34 @@ namespace SuperHeroes.Controllers
 {
     public class SuperHeroesController : Controller
     {
+        ApplicationDbContext db;
+
+        public SuperHeroesController()
+        {
+            db = new ApplicationDbContext();
+        }
         // GET: SuperHeroes
         public ActionResult Index()
         {
             return View();
         }
-
-        // GET: SuperHeroes/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: SuperHeroes/Create
+        //GET: SuperHeroes/Create
         public ActionResult Create()
         {
-            return View();
+            return View(new SuperHeroes.Models.SuperHeroes());
         }
 
-        // POST: SuperHeroes/Create
+        //POST: SuperHeroes//Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create([Bind(Include = "ID,Name,PrimaryAbility,SecondaryAbility,CAtchPhrase")] SuperHeroes.Models.SuperHeroes superHeroes)
         {
             try
             {
-                // TODO: Add insert logic here
+                //TODO: Add insert logic here
+                db.SuperHeroes.Add(superHeroes);
+                db.SaveChanges();
 
+                
                 return RedirectToAction("Index");
             }
             catch
@@ -42,41 +46,39 @@ namespace SuperHeroes.Controllers
             }
         }
 
-        // GET: SuperHeroes/Edit/5
-        public ActionResult Edit(int id)
+        //GET: SuperHeroes/Detail
+        public ActionResult Detail()
         {
             return View();
         }
 
-        // POST: SuperHeroes/Edit/5
+       
+
+        public ActionResult Read(int id)
+        {
+            return View(db.SuperHeroes.Where(s => s.ID == id).Single());
+        }
+
+        public ActionResult List()
+        {
+            return View(db.SuperHeroes.ToList());
+        }
+
+        public ActionResult Delete(int id)
+        {
+            return View(db.SuperHeroes.Where(s => s.ID == id).Single());
+        }
+
+      
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Delete(int id, FormCollection collection)     
         {
             try
             {
                 // TODO: Add update logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: SuperHeroes/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: SuperHeroes/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
+                db.SuperHeroes.Remove(db.SuperHeroes.Where(s => s.ID == id).Single());
+                db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -84,6 +86,7 @@ namespace SuperHeroes.Controllers
             {
                 return View();
             }
+
         }
     }
 }
