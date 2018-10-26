@@ -19,7 +19,9 @@ namespace SuperHeroes.Controllers
         // GET: SuperHeroes
         public ActionResult Index()
         {
-            return View();
+            List<SuperHeroes.Models.SuperHeroes> superhero  = new List<SuperHeroes.Models.SuperHeroes>();
+            superhero = db.SuperHeroes.ToList();
+            return View(superhero);
         }
         //GET: SuperHeroes/Create
         public ActionResult Create()
@@ -29,7 +31,7 @@ namespace SuperHeroes.Controllers
 
         //POST: SuperHeroes//Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "ID,Name,PrimaryAbility,SecondaryAbility,CAtchPhrase")] SuperHeroes.Models.SuperHeroes superHeroes)
+        public ActionResult Create([Bind(Include = "ID,Name,AlterEgo,PrimaryAbility,SecondaryAbility,CAtchPhrase")] SuperHeroes.Models.SuperHeroes superHeroes)
         {
             try
             {
@@ -86,6 +88,35 @@ namespace SuperHeroes.Controllers
             {
                 return View();
             }
+
+        }
+
+        // GET: People/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
+
+        // POST: People/Edit/5
+        [HttpPost]
+        public ActionResult Edit( SuperHeroes.Models.SuperHeroes superHeroes)
+            {
+            if (ModelState.IsValid)
+            {
+                var hero = db.SuperHeroes.Where(s => s.ID == superHeroes.ID).Single();
+                hero.Name = superHeroes.Name;
+                hero.AlterEgo = superHeroes.AlterEgo;
+                hero.PrimaryAbility = superHeroes.PrimaryAbility;
+                hero.SecondaryAbility = superHeroes.SecondaryAbility;
+                hero.CatchPhrase = superHeroes.CatchPhrase;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            
+            }
+           
+          
+                return View();
+            
 
         }
     }
